@@ -1,0 +1,30 @@
+export const ERROR_CODES = {
+  EMAIL_ALREADY_EXISTS: "EMAIL_ALREADY_EXISTS",
+  INVALID_CREDENTIALS: "INVALID_CREDENTIALS",
+  EMAIL_NOT_VERIFIED: "EMAIL_NOT_VERIFIED",
+  RESEND_TOO_SOON: "RESEND_TOO_SOON",
+  OTP_EXPIRED: "OTP_EXPIRED",
+  OTP_BLOCKED_24H: "OTP_BLOCKED_24H",
+  RESEND_LIMIT_EXCEEDED: "RESEND_LIMIT_EXCEEDED",
+  TOKEN_EXPIRED: "TOKEN_EXPIRED",
+  REFRESH_TOKEN_EXPIRED: "REFRESH_TOKEN_EXPIRED",
+  UNAUTHORIZED: "UNAUTHORIZED",
+  NOT_FOUND: "NOT_FOUND",
+  VALIDATION_ERROR: "VALIDATION_ERROR",
+  BAD_REQUEST: "BAD_REQUEST",
+  TEST_EXPIRED: "TEST_EXPIRED",
+} as const;
+
+export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
+
+export class AppError extends Error {
+  constructor(
+    public readonly code: ErrorCode,
+    message: string,
+    public readonly statusCode: number = 400
+  ) {
+    super(message);
+    this.name = 'AppError';
+    Object.setPrototypeOf(this, AppError.prototype);
+  }
+}
