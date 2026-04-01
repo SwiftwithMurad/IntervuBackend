@@ -1,9 +1,9 @@
-import mongoose from 'mongoose';
 import { env } from './config/env';
 import app from './app';
+import { connectMongo } from './db/connectMongo';
 
 async function main(): Promise<void> {
-  await mongoose.connect(env.MONGODB_URI);
+  await connectMongo();
   console.log('MongoDB connected');
 
   app.listen(env.PORT, () => {

@@ -1,11 +1,21 @@
-import express, { Request } from "express";
+import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import { rateLimiter } from "./middlewares/rateLimiter";
 import { errorHandler } from "./middlewares/errorHandler";
 import routes from "./routes";
+import { connectMongo } from "./db/connectMongo";
 
 const app = express();
+
+app.use(async (_req, _res, next) => {
+  try {
+    await connectMongo();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 app.use(helmet());
 app.use(cors({ origin: true, credentials: true }));

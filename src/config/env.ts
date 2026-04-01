@@ -14,6 +14,11 @@ export const env = {
   JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN,
   BREVO_API_KEY: process.env.BREVO_API_KEY ?? "",
   EMAIL_FROM: process.env.EMAIL_FROM ?? "mail adress",
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY ?? "",
+  OPENAI_MODEL: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
+  TERMS_OF_USE_URL: process.env.TERMS_OF_USE_URL ?? "",
+  PRIVACY_POLICY_URL: process.env.PRIVACY_POLICY_URL ?? "",
+  BLOG_URL: process.env.BLOG_URL ?? "",
 
   RATE_LIMIT_WINDOW_MS: parseInt(
     process.env.RATE_LIMIT_WINDOW_MS ?? "900000",

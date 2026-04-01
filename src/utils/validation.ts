@@ -56,3 +56,21 @@ export const authSchemas = {
 };
 
 export const paramsId = z.object({ id: z.string().min(1) });
+
+export const sessionIdParamSchema = z.object({
+  sessionId: z.string().min(1, "sessionId is required"),
+});
+
+export const interviewSchemas = {
+  startSession: z.object({
+    role: z.string().min(1, "role is required"),
+    level: z.enum(["JUNIOR", "MIDDLE", "SENIOR"]),
+    style: z.enum(["FAANG", "STARTUP"]),
+    topics: z.array(z.string().min(1)).min(1, "at least one topic is required"),
+    questionCount: z.number().int().min(1).max(20).default(5),
+    questionTimeLimitSec: z.number().int().min(60).max(7200).default(900),
+  }),
+  submitAnswer: z.object({
+    answerText: z.string().min(1, "answerText is required"),
+  }),
+};

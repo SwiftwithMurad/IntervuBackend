@@ -1,39 +1,89 @@
-# Polyvia Backend – AI Vocabulary Trainer API
+# Intervu Backend
 
-Node.js + Express + MongoDB (Mongoose) ile yazılmış production-ready REST APIIIII.
+Express + TypeScript + MongoDB backend for an iOS AI interview app.  
+This repo includes:
 
-## Kurulum
+- Complete auth flow (register/login/refresh/forgot/reset password with OTP).
+- Interview flow with GPT-4o-mini evaluations.
+- Free vs Pro gating for history and ideal answers.
+- Vercel deployment support.
+
+## Local setup
 
 ```bash
 cp .env.example .env
-# .env dosyasını düzenleyin (MONGODB_URI, JWT secret'lar, OPENAI_API_KEY vb.)
-
 npm install
 npm run dev
 ```
 
-## Ortam Değişkenleri
+Set at least these env vars:
 
-- `MONGODB_URI` – MongoDB bağlantı adresi
-- `JWT_ACCESS_SECRET` / `JWT_REFRESH_SECRET` – JWT imzalama (en az 32 karakter)
-- `OPENAI_API_KEY` – OpenAI API anahtarı (konu üretimi için)
-- `EMAIL_*` – E-posta (OTP) gönderimi (opsiyonel; dev’de log’a yazılır)
-- `REVENUECAT_WEBHOOK_SECRET` – RevenueCat webhook imza doğrulama
+- `MONGODB_URI`
+- `JWT_ACCESS_SECRET`
+- `JWT_REFRESH_SECRET`
+- `OPENAI_API_KEY`
 
-## API Özeti
+## Main endpoints
 
-- **Auth:** `POST /api/v1/auth/register`, `verify-email`, `login`, `refresh`, `forgot-password`, `reset-password`
-- **Topics:** `POST /api/v1/topics/generate`, `POST /api/v1/topics/:draftId/save`, `GET /api/v1/topics`
-- **Test:** `GET /api/v1/topics/:id/test`, `POST /api/v1/topics/:id/submit`
-- **Webhook:** `POST /api/v1/webhooks/revenuecat` (RevenueCat)
+### Auth
 
-iOS uygulamasında RevenueCat’e `app_user_id` olarak kullanıcı ID’sini (MongoDB ObjectId) gönderin; webhook plan güncellemesi buna göre yapılır.
+- `POST /api/v1/auth/register`
+- `POST /api/v1/auth/verify-email`
+- `POST /api/v1/auth/login`
+- `POST /api/v1/auth/refresh`
+- `POST /api/v1/auth/forgot-password`
+- `POST /api/v1/auth/verify-reset-otp`
+- `POST /api/v1/auth/reset-password`
 
-## Hata Kodları
+### Interview (JWT required)
 
-`EMAIL_ALREADY_EXISTS`, `INVALID_CREDENTIALS`, `EMAIL_NOT_VERIFIED`, `OTP_EXPIRED`, `OTP_BLOCKED_24H`, `RESEND_LIMIT_EXCEEDED`, `DAILY_TOPIC_LIMIT_EXCEEDED`, `TEST_ALREADY_COMPLETED`, `DRAFT_EXPIRED`, `UNAUTHORIZED`, vb.
+- `GET /api/v1/interview/main-config`  
+  Roles, levels, styles, topics for your main screen.
+- `POST /api/v1/interview/sessions/start`  
+  Starts an interview session and returns first question.
+- `GET /api/v1/interview/sessions/:sessionId/question`  
+  Returns current question + remaining timer.
+- `POST /api/v1/interview/sessions/:sessionId/answer`  
+  Saves answer, evaluates it, returns next question or completed status.
+- `GET /api/v1/interview/sessions/:sessionId/feedback`  
+  Returns detailed feedback (`idealAnswer` visible only for Pro).
+- `GET /api/v1/interview/sessions-summary`
+- `GET /api/v1/interview/history`  
+  Free users get limited history, Pro users get full history.
 
-## Cron
+### Profile and paywall (JWT required)
 
-- Her 5 dakika: 15 dakikadan eski DRAFT konular EXPIRED yapılır.
-- Her saat: OTP resend sayaçları sıfırlanır.
+- `GET /api/v1/profile/me`
+- `GET /api/v1/paywall`
+
+Paywall products:
+
+- Monthly: `$7.99`
+- Yearly: `$49.99`
+
+## Vercel deployment
+
+This repo includes `vercel.json` and `api/index.ts` to run Express on Vercel. MongoDB connects on each request via middleware (required for serverless).
+
+1. Push this repo to GitHub (see below).
+2. In [Vercel](https://vercel.com): New Project → Import the GitHub repo.
+3. **Environment variables:** add the same keys as in `.env.example` (copy values from your local `.env`, **never** commit `.env`).
+   - Required: `MONGODB_URI`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `OPENAI_API_KEY`
+   - Optional: `OPENAI_MODEL`, `JWT_*_EXPIRES_IN`, `BREVO_API_KEY`, `EMAIL_FROM`, profile URLs, etc.
+4. Deploy.
+
+After deploy, use your Vercel URL as the API base (no trailing slash), for example:
+
+- Health: `GET https://<your-project>.vercel.app/health`
+- Auth: `POST https://<your-project>.vercel.app/api/v1/auth/login`
+
+Test in Postman: set **Authorization → Bearer Token** with `accessToken` after login.
+
+### Push to GitHub
+
+```bash
+git add -A
+git status   # confirm .env is NOT listed
+git commit -m "Add interview API, Vercel entry, MongoDB connect for serverless"
+git push origin main
+```
