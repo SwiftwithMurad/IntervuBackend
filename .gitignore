@@ -6,3 +6,4 @@ dist
 .env.test.local
 .env.production.local
 src/config/polyvia-71a61-firebase-adminsdk-fbsvc-287a6cee58.json
+.vercel
