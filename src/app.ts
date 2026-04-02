@@ -5,12 +5,20 @@ import { rateLimiter } from "./middlewares/rateLimiter";
 import { errorHandler } from "./middlewares/errorHandler";
 import routes from "./routes";
 import { connectMongo } from "./db/connectMongo";
+import { EMAIL_LOGO_PNG_BASE64 } from "./emailAssets/logoPng";
 
 const app = express();
 
 // Liveness: must not depend on MongoDB (Vercel cold starts + Atlas IP allowlist debugging).
 app.get("/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
+// Public logo for transactional emails (Gmail etc. block data: URLs in <img>).
+app.get("/email-assets/logo.png", (_req, res) => {
+  const buf = Buffer.from(EMAIL_LOGO_PNG_BASE64, "base64");
+  res.setHeader("Cache-Control", "public, max-age=86400");
+  res.type("png").send(buf);
 });
 
 app.use(async (_req, _res, next) => {

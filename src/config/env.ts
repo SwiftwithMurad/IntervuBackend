@@ -21,6 +21,12 @@ export const env = {
   TERMS_OF_USE_URL: process.env.TERMS_OF_USE_URL ?? "",
   PRIVACY_POLICY_URL: process.env.PRIVACY_POLICY_URL ?? "",
   BLOG_URL: process.env.BLOG_URL ?? "",
+  /**
+   * Public origin for absolute URLs in emails (e.g. https://intervu-backend.vercel.app).
+   * Many clients block data: images; logo uses `${PUBLIC_BASE_URL}/email-assets/logo.png`.
+   * On Vercel, `VERCEL_URL` is used as fallback if this is unset.
+   */
+  PUBLIC_BASE_URL: process.env.PUBLIC_BASE_URL ?? "",
 
   RATE_LIMIT_WINDOW_MS: parseInt(
     process.env.RATE_LIMIT_WINDOW_MS ?? "900000",
@@ -28,3 +34,16 @@ export const env = {
   ),
   RATE_LIMIT_MAX: parseInt(process.env.RATE_LIMIT_MAX ?? "100", 10),
 } as const;
+
+/** HTTPS origin without trailing slash, for email image URLs. */
+export function getPublicBaseUrl(): string {
+  const explicit = env.PUBLIC_BASE_URL.replace(/\/$/, "").trim();
+  if (explicit) {
+    return explicit.startsWith("http") ? explicit : `https://${explicit}`;
+  }
+  const vercel = process.env.VERCEL_URL?.replace(/^https?:\/\//, "").trim();
+  if (vercel) {
+    return `https://${vercel}`;
+  }
+  return "";
+}
