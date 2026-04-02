@@ -2,6 +2,21 @@ import { env } from "../config/env";
 
 const BREVO_API = "https://api.brevo.com/v3/smtp/email";
 
+/** 56×56 PNG of app icon, embedded for email clients (regenerate from `src/assets/email-logo.png` if logo changes). */
+const EMAIL_LOGO_DATA_URI =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAIAAAAn5KxJAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAOKADAAQAAAABAAAAOAAAAAANV2hTAAAC+ElEQVRoBe1Zu24TQRS91+tn7MRxbGObBCFFVDRU/AWipUMiHS1fwA9QgkRLQ0V+AImSCj4CkBw7iR0H4/d6hzM7fqCxtIM821ia0Wg1d9Zz7rnnrrzSWc7n87QLI7ELJCVHRzTuTjlFnaJxKxA33s48o0lj5UIQCWImwox7KHAgS/zIYSAKoExWooyHNJtQEEjSwE0k5GQ1o9MIeUIE8uziGlYOEM+jZJqyebk/GRu4GohOR/Tkxez5K799yd1L7lxwp8nXF9xt8c0V/+7y4JZGQ0YNc59kVblFPoSz6YIKNvcKolAUB2UqVcVRTRzVg3JDlGoCYbVCH94kz9+lMntRkhqIIjcqvn8a1E/lS0z1B4rMiaZzGg8k0dsu91BGi1s/+dPb9J8ezef08HHw9GxWrInDquQHluCazlLqn5ehak+aQlEBGjkMRHEWXH2i2QYKGlc4EPsH1LgnUINHNCL6/DEFmf0ZPXgUPDvzx0Rgowiphk83ccIUG9v6hpmofmIZq8TLSIqN5xhVqYHWg+Vkddt6sTN/T46oda81AKeoJoh16BS1llADcIpqgliHTlFrCTUAp6gmiHXoFLWWUANwimqCWIdOUWsJNQCnqCaIdegUtZZQA3CKaoJYh05Rawk1gC29JzhNmGjH6orFPHRSVYKER5ml+7fyyZRbpjH4z9BMFIYtnEGYX6CCgWQw9yYTGva5f8O9K2k4XsM0bXL7F3fbDIrpDH3/4r1+makci+pJULkLQ1QcVkS+KHL5tfMITKCBgdFuRl4DUXjKoPLtq9cMqShCnZbkB5aDPk+GBJNROdH4MRxQZGWPWj/4/H1SeepeUu7nCmK/JI3ccl1UjoM7J6hBVBqiXhejgZkrGz/aIjGMWX9KAdxbVL80xRfWuNyS+9EDdqScoUEOHOlO4rtAglKhNY71FCZlJI6ZqGSwanw0na3uKkvV2H1D6xepI2vdit76kJGi+qn7H11LFs/KKRqPjmsUp+hai3hWTtF4dFyj/AUumPwI8RkFxgAAAABJRU5ErkJggg==";
+
+function emailBrandHeader(): string {
+  return `<table cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="width:28px;height:28px;vertical-align:middle;padding:0;">
+                    <img src="${EMAIL_LOGO_DATA_URI}" width="28" height="28" alt="Intervu" style="display:block;border:0;border-radius:6px;" />
+                  </td>
+                  <td style="padding-left:10px;color:#fff;font-size:15px;font-weight:600;letter-spacing:-0.3px;vertical-align:middle;">Intervu</td>
+                </tr>
+              </table>`;
+}
+
 async function sendMail(
   to: string,
   subject: string,
@@ -52,14 +67,7 @@ export async function sendVerificationEmail(
         <table width="480" cellpadding="0" cellspacing="0" style="background:#0A0A0A;border:1px solid #222;border-radius:4px;overflow:hidden;">
           <tr>
             <td style="padding:32px 40px 28px;border-bottom:1px solid #1a1a1a;">
-              <table cellpadding="0" cellspacing="0">
-                <tr>
-                  <td style="background:#C8FF00;width:28px;height:28px;border-radius:3px;text-align:center;vertical-align:middle;">
-                    <span style="font-size:14px;font-weight:900;color:#0A0A0A;line-height:28px;">I</span>
-                  </td>
-                  <td style="padding-left:10px;color:#fff;font-size:15px;font-weight:600;letter-spacing:-0.3px;">Intervu</td>
-                </tr>
-              </table>
+              ${emailBrandHeader()}
             </td>
           </tr>
           <tr>
@@ -120,14 +128,7 @@ export async function sendPasswordResetEmail(
         <table width="480" cellpadding="0" cellspacing="0" style="background:#0A0A0A;border:1px solid #222;border-radius:4px;overflow:hidden;">
           <tr>
             <td style="padding:32px 40px 28px;border-bottom:1px solid #1a1a1a;">
-              <table cellpadding="0" cellspacing="0">
-                <tr>
-                  <td style="background:#C8FF00;width:28px;height:28px;border-radius:3px;text-align:center;vertical-align:middle;">
-                    <span style="font-size:14px;font-weight:900;color:#0A0A0A;line-height:28px;">I</span>
-                  </td>
-                  <td style="padding-left:10px;color:#fff;font-size:15px;font-weight:600;letter-spacing:-0.3px;">Intervu</td>
-                </tr>
-              </table>
+              ${emailBrandHeader()}
             </td>
           </tr>
           <tr>
