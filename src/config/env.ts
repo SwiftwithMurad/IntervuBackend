@@ -14,6 +14,8 @@ export const env = {
   JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN,
   BREVO_API_KEY: process.env.BREVO_API_KEY ?? "",
   EMAIL_FROM: process.env.EMAIL_FROM ?? "mail adress",
+  /** Shown as the sender display name in the inbox (Brevo `sender.name`). */
+  EMAIL_SENDER_NAME: process.env.EMAIL_SENDER_NAME ?? "Intervu",
   OPENAI_API_KEY: process.env.OPENAI_API_KEY ?? "",
   OPENAI_MODEL: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
   TERMS_OF_USE_URL: process.env.TERMS_OF_USE_URL ?? "",
