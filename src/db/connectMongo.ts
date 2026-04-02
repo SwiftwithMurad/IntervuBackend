@@ -14,7 +14,11 @@ export async function connectMongo(): Promise<void> {
     return;
   }
   if (!connPromise) {
-    connPromise = mongoose.connect(env.MONGODB_URI);
+    connPromise = mongoose.connect(env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 10_000,
+      connectTimeoutMS: 10_000,
+      maxPoolSize: 10,
+    });
   }
   await connPromise;
 }

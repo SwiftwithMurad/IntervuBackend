@@ -8,6 +8,11 @@ import { connectMongo } from "./db/connectMongo";
 
 const app = express();
 
+// Liveness: must not depend on MongoDB (Vercel cold starts + Atlas IP allowlist debugging).
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
 app.use(async (_req, _res, next) => {
   try {
     await connectMongo();
@@ -24,8 +29,9 @@ app.set("trust proxy", 1);
 app.use(rateLimiter);
 app.use("/api/v1", routes);
 
-app.all("/health", (_req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
+// Readiness: same process path as API (Mongo already connected in middleware above).
+app.get("/health/ready", (_req, res) => {
+  res.json({ status: "ready", timestamp: new Date().toISOString() });
 });
 
 app.use(errorHandler);
